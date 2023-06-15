@@ -2,6 +2,8 @@ package org.mskcc.cbio.oncokb.model;
 
 
 import org.mskcc.cbio.oncokb.apiModels.TumorType;
+import org.mskcc.cbio.oncokb.model.clinicalTrialsMatching.Trial;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +24,7 @@ public class IndicatorQueryTreatment implements java.io.Serializable {
     private Set<String> pmids = new HashSet<>(0);
     private Set<ArticleAbstract> abstracts = new HashSet<>(0);
     private String description = "";
+    private Set<Trial> trials = new HashSet<>(0);
 
     public IndicatorQueryTreatment() {
     }
@@ -104,6 +107,14 @@ public class IndicatorQueryTreatment implements java.io.Serializable {
 
     public void setAbstracts(Set<ArticleAbstract> abstracts) {
         this.abstracts = abstracts;
+    }
+
+    public Set<Trial> getTrials() {
+        return this.trials;
+    }
+
+    public void setTrials(Set<Trial> trials) {
+        this.trials = trials;
     }
 
     @Override

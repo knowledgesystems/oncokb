@@ -1,4 +1,4 @@
-package org.mskcc.cbio.oncokb.model.clinicalTrialsMathcing;
+package org.mskcc.cbio.oncokb.model.clinicalTrialsMatching;
 
 /**
  * Created by Yifu Yao on 2020-09-08
