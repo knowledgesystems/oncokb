@@ -63,6 +63,7 @@ public class EvidencesApiController implements EvidencesApi {
         , @ApiParam(value = "Separate by comma. LEVEL_1, LEVEL_2A, LEVEL_2B, LEVEL_3A, LEVEL_3B, LEVEL_4, LEVEL_R1, LEVEL_R2, LEVEL_R3") @RequestParam(value = "levelOfEvidence", required = false) String levels
         , @ApiParam(value = "Separate by comma. Evidence type includes GENE_SUMMARY, GENE_BACKGROUND, MUTATION_SUMMARY, ONCOGENIC, MUTATION_EFFECT, VUS, PROGNOSTIC_IMPLICATION, DIAGNOSTIC_IMPLICATION, TUMOR_TYPE_SUMMARY, DIAGNOSTIC_SUMMARY, PROGNOSTIC_SUMMARY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE, INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY, INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE") @RequestParam(value = "evidenceTypes", required = false) String evidenceTypes
         , @ApiParam(value = "The fields to be returned.") @RequestParam(value = "fields", required = false) String fields
+        , @ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     ) {
         HttpStatus status = HttpStatus.OK;
         List<Evidence> evidences = new ArrayList<>();
@@ -70,7 +71,7 @@ public class EvidencesApiController implements EvidencesApi {
         Query tmpQuery = new Query(null, DEFAULT_REFERENCE_GENOME, entrezGeneId,
             hugoSymbol, variant, null, null,
             tumorType, consequence, proteinStart == null ? null : Integer.parseInt(proteinStart),
-            proteinEnd == null ? null : Integer.parseInt(proteinEnd), null);
+            proteinEnd == null ? null : Integer.parseInt(proteinEnd), null, germline, null, null);
 
         List<EvidenceQueryRes> evidenceQueries = EvidenceUtils.processRequest(
             Collections.singletonList(tmpQuery),

@@ -515,7 +515,7 @@ public class SummaryUtils {
         return sb.toString();
     }
 
-    public static String geneSummary(Gene gene, String queryHugoSymbol) {
+    public static String geneSummary(Gene gene, String queryHugoSymbol, boolean isGermline) {
         if (gene != null && gene.getHugoSymbol().equals(SpecialStrings.OTHERBIOMARKERS)) {
             return "";
         }

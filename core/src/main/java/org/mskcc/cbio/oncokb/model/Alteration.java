@@ -77,9 +77,14 @@ public class Alteration implements java.io.Serializable {
     @JoinColumn(name = "consequence")
     private VariantConsequence consequence;
 
+    @Lob
     private String alteration;
 
-    @Column(length = 300, nullable = false)
+    @Lob
+    @Column(name = "protein_change")
+    private String proteinChange;
+
+    @Lob
     private String name;
 
     @Column(name = "ref_residues")
@@ -151,6 +156,14 @@ public class Alteration implements java.io.Serializable {
 
     public void setAlteration(String alteration) {
         this.alteration = alteration;
+    }
+
+    public String getProteinChange() {
+        return proteinChange;
+    }
+
+    public void setProteinChange(String proteinChange) {
+        this.proteinChange = proteinChange;
     }
 
     public String getName() {
@@ -239,6 +252,7 @@ public class Alteration implements java.io.Serializable {
             getAlterationType() == that.getAlterationType() &&
             Objects.equals(getConsequence(), that.getConsequence()) &&
             Objects.equals(getAlteration(), that.getAlteration()) &&
+            Objects.equals(getProteinChange(), that.getProteinChange()) &&
             Objects.equals(getName(), that.getName()) &&
             Objects.equals(getRefResidues(), that.getRefResidues()) &&
             Objects.equals(getProteinStart(), that.getProteinStart()) &&
@@ -264,6 +278,11 @@ public class Alteration implements java.io.Serializable {
         }
         if (this.alteration != null) {
             content.add(this.alteration);
+        } else {
+            content.add("");
+        }
+        if (this.proteinChange != null) {
+            content.add(this.proteinChange);
         } else {
             content.add("");
         }

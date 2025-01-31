@@ -1,29 +1,52 @@
 package org.mskcc.cbio.oncokb.util;
 
+import java.util.*;
 import org.mskcc.cbio.oncokb.model.EvidenceType;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Hongxin on 11/09/16.
  */
 public class EvidenceTypeUtils {
-    public static Set<EvidenceType> getGeneEvidenceTypes() {
+    public static Set<EvidenceType> getGeneEvidenceTypes(Boolean germline) {
         Set<EvidenceType> evidenceTypes = new HashSet<>();
-        evidenceTypes.add(EvidenceType.GENE_SUMMARY);
+        if(Boolean.TRUE.equals(germline)) {
+            evidenceTypes.add(EvidenceType.GENE_SUMMARY);
+        } else {
+            evidenceTypes.add(EvidenceType.GENE_SUMMARY);
+        }
         evidenceTypes.add(EvidenceType.GENE_BACKGROUND);
         return evidenceTypes;
     }
 
-    public static Set<EvidenceType> getMutationEvidenceTypes() {
+    public static Set<EvidenceType> getMutationEvidenceTypes(Boolean germline) {
+        Set<EvidenceType> evidenceTypes = new HashSet<>();
+        if (Boolean.TRUE.equals(germline)) {
+            evidenceTypes.addAll(getGermlineVariantEvidenceTypes());
+        } else {
+            evidenceTypes.addAll(getSomaticMutationEvidenceTypes());
+        }
+        evidenceTypes.add(EvidenceType.VUS);
+        evidenceTypes.add(EvidenceType.MUTATION_SUMMARY);
+        return evidenceTypes;
+    }
+
+    public static Set<EvidenceType> getSomaticMutationEvidenceTypes() {
         Set<EvidenceType> evidenceTypes = new HashSet<>();
         evidenceTypes.add(EvidenceType.ONCOGENIC);
         evidenceTypes.add(EvidenceType.MUTATION_EFFECT);
-        evidenceTypes.add(EvidenceType.VUS);
-        evidenceTypes.add(EvidenceType.MUTATION_SUMMARY);
+        return evidenceTypes;
+    }
+
+    public static Set<EvidenceType> getGermlineVariantEvidenceTypes() {
+        Set<EvidenceType> evidenceTypes = new HashSet<>();
+        evidenceTypes.add(EvidenceType.PATHOGENIC);
+        evidenceTypes.add(EvidenceType.GENOMIC_INDICATOR);
+        evidenceTypes.add(EvidenceType.GENE_PENETRANCE);
+        evidenceTypes.add(EvidenceType.GENE_CANCER_RISK);
+        evidenceTypes.add(EvidenceType.GENE_INHERITANCE_MECHANISM);
+        evidenceTypes.add(EvidenceType.VARIANT_PENETRANCE);
+        evidenceTypes.add(EvidenceType.VARIANT_CANCER_RISK);
+        evidenceTypes.add(EvidenceType.VARIANT_INHERITANCE_MECHANISM);
         return evidenceTypes;
     }
 
@@ -73,7 +96,11 @@ public class EvidenceTypeUtils {
         return types;
     }
 
-    public static List<EvidenceType> getAllEvidenceTypes() {
-        return Arrays.asList(EvidenceType.values());
+    public static List<EvidenceType> getAllEvidenceTypes(Boolean germline) {
+        List<EvidenceType> evidenceTypes = new ArrayList<>();
+        evidenceTypes.addAll(getGeneEvidenceTypes(germline));
+        evidenceTypes.addAll(getMutationEvidenceTypes(germline));
+        evidenceTypes.addAll(getTumorTypeEvidenceTypes());
+        return evidenceTypes;
     }
 }

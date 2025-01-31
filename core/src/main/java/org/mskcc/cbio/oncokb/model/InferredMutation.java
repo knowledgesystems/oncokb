@@ -8,6 +8,7 @@ import java.util.Set;
  */
 public enum InferredMutation implements OncoKBVariant {
     ONCOGENIC_MUTATIONS("Oncogenic Mutations"),
+    PATHOGENIC_VARIANTS("Pathogenic Variants"),
     GAIN_OF_FUNCTION_MUTATIONS("Gain-of-function Mutations"),
     LOSS_OF_FUNCTION_MUTATIONS("Loss-of-function Mutations"),
     SWITCH_OF_FUNCTION_MUTATIONS("Switch-of-function Mutations"),

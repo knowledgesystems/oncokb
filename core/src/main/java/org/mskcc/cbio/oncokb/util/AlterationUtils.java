@@ -1326,6 +1326,10 @@ public final class AlterationUtils {
         return findAlterationsByStartWith(InferredMutation.ONCOGENIC_MUTATIONS.getVariant(), fullAlterations);
     }
 
+    public static List<Alteration> findPathogenicVariants(List<Alteration> fullAlterations) {
+        return findAlterationsByStartWith(InferredMutation.PATHOGENIC_VARIANTS.getVariant(), fullAlterations);
+    }
+
     public static List<Alteration> findFusions(List<Alteration> fullAlterations) {
         return findAlterationsByStartWith(StructuralAlteration.FUSIONS.getVariant(), fullAlterations);
     }

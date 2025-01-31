@@ -138,7 +138,9 @@ public class EvidenceController {
     @RequestMapping(value = "/legacy-api/vus/update/{hugoSymbol}", method = RequestMethod.POST)
     public
     @ResponseBody
-    synchronized ResponseEntity updateVUS(@ApiParam(value = "hugoSymbol", required = true) @PathVariable("hugoSymbol") String hugoSymbol,
+    synchronized ResponseEntity updateVUS(
+        @ApiParam(value = "germline", required = true) @PathVariable("germline") Boolean germline,
+        @ApiParam(value = "hugoSymbol", required = true) @PathVariable("hugoSymbol") String hugoSymbol,
                                           @RequestBody String vus) throws JSONException, IOException {
 
         HttpStatus status = HttpStatus.OK;
@@ -150,7 +152,7 @@ public class EvidenceController {
                     Collections.singleton(EvidenceType.VUS), null);
                 deleteEvidencesAndAlts(evidences);
                 DriveAnnotationParser driveAnnotationParser = new DriveAnnotationParser();
-                driveAnnotationParser.parseVUS(gene, new JSONArray(vus), 1);
+                driveAnnotationParser.parseVUS(germline, gene, new JSONArray(vus), 1);
                 updateCacheBasedOnGenes(Collections.singleton(gene));
             }
         }
@@ -335,7 +337,7 @@ public class EvidenceController {
                 for (Alteration alteration : alterations) {
                     Evidence evidence = new Evidence(
                         uuid, evidenceType, new HashSet<>(), new HashSet<>(), new HashSet<>(), gene, Collections.singleton(alteration),
-                        description, additionalInfo, treatments, knownEffect, lastEdit, null,
+                        description, additionalInfo, treatments, knownEffect, null, lastEdit, null,
                         level, fdaLevel, solidPropagation, liquidPropagation, articles
                     );
                     initEvidence(evidence, new ArrayList<>(evidence.getTreatments()));
@@ -345,7 +347,7 @@ public class EvidenceController {
             } else if (!isCancerEvidence) {
                 Evidence evidence = new Evidence(
                     uuid, evidenceType, new HashSet<>(), new HashSet<>(), new HashSet<>(), gene, alterations,
-                    description, additionalInfo, treatments, knownEffect, lastEdit, null,
+                    description, additionalInfo, treatments, knownEffect, null, lastEdit, null,
                     level, fdaLevel, solidPropagation, liquidPropagation, articles
                 );
                 initEvidence(evidence, new ArrayList<>(evidence.getTreatments()));
@@ -354,7 +356,7 @@ public class EvidenceController {
             } else {
                 Evidence evidence = new Evidence(
                     uuid, evidenceType, cancerTypes, excludedCancerTypes, relevantCancerTypes, gene, alterations,
-                    description, additionalInfo, treatments, knownEffect, lastEdit, null,
+                    description, additionalInfo, treatments, knownEffect, null, lastEdit, null,
                     level, fdaLevel, solidPropagation, liquidPropagation, articles
                 );
                 initEvidence(evidence, new ArrayList<>(evidence.getTreatments()));
@@ -390,7 +392,7 @@ public class EvidenceController {
             // create a new evidence based on input passed in, and gene and alterations information from the current evidences
             Evidence evidence = new Evidence(
                 uuid, evidenceType, cancerTypes, excludedCancerTypes, relevantCancerTypes, gene, alterations,
-                description, additionalInfo, treatments, knownEffect, lastEdit, null,
+                description, additionalInfo, treatments, knownEffect, null, lastEdit, null,
                 level, fdaLevel, solidPropagation, liquidPropagation, articles
             );
 

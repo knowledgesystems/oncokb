@@ -131,10 +131,14 @@ public class Evidence implements java.io.Serializable {
     })
     private Set<Alteration> alterations;
 
-    @Column(length = 65535)
+    @Lob
+    private String name;
+
+    @Lob
     private String description;
 
-    @Column(name = "additional_info", length = 65535)
+    @Lob
+    @Column(name = "additional_info")
     private String additionalInfo;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "evidence", cascade = CascadeType.ALL)
@@ -246,6 +250,14 @@ public class Evidence implements java.io.Serializable {
 
     public void setAlterations(Set<Alteration> alterations) {
         this.alterations = alterations;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -421,6 +433,7 @@ public class Evidence implements java.io.Serializable {
         this.description = e.description;
         this.additionalInfo = e.additionalInfo;
         this.knownEffect = e.knownEffect;
+        this.name = e.name;
         this.lastEdit = e.lastEdit;
         this.lastReview = e.lastReview;
         this.levelOfEvidence = e.levelOfEvidence;
@@ -434,7 +447,7 @@ public class Evidence implements java.io.Serializable {
     }
 
     public Evidence(String uuid, EvidenceType evidenceType, Set<TumorType> cancerTypes, Set<TumorType> excludedCancerTypes, Set<TumorType> relevantCancerTypes, Gene gene, Set<Alteration> alterations, String description, String additionalInfo, List<Treatment> treatments,
-                    String knownEffect, Date lastEdit, Date lastReview,
+                    String knownEffect, String name, Date lastEdit, Date lastReview,
                     LevelOfEvidence levelOfEvidence,
                     LevelOfEvidence fdaLevel,
                     LevelOfEvidence solidPropagationLevel, LevelOfEvidence liquidPropagationLevel,
@@ -449,6 +462,7 @@ public class Evidence implements java.io.Serializable {
         this.description = description;
         this.additionalInfo = additionalInfo;
         this.knownEffect = knownEffect;
+        this.name = name;
         this.lastEdit = lastEdit;
         this.lastReview = lastReview;
         this.levelOfEvidence = levelOfEvidence;

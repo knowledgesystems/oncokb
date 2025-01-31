@@ -43,6 +43,7 @@ public class VariantAnnotation extends IndicatorQueryResp {
         this.setTreatments(indicatorQueryResp.getTreatments());
         this.setDataVersion(indicatorQueryResp.getDataVersion());
         this.setLastUpdate(indicatorQueryResp.getLastUpdate());
+        this.setGermline(indicatorQueryResp.getGermline());
     }
 
     public String getBackground() {

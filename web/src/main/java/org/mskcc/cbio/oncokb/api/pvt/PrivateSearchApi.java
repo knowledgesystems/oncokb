@@ -2,6 +2,7 @@ package org.mskcc.cbio.oncokb.api.pvt;
 
 import io.swagger.annotations.*;
 import org.mskcc.cbio.oncokb.model.*;
+import org.mskcc.cbio.oncokb.model.BiologicalVariant;
 import org.oncokb.oncokb_transcript.ApiException;
 import org.oncokb.oncokb_transcript.client.Drug;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public interface PrivateSearchApi {
         produces = {"application/json"},
         method = RequestMethod.GET)
     ResponseEntity<Set<BiologicalVariant>> searchVariantsBiologicalGet(@ApiParam(value = "") @RequestParam(value = "hugoSymbol", required = false) String hugoSymbol
+        ,@ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     );
 
 
@@ -35,7 +37,7 @@ public interface PrivateSearchApi {
         produces = {"application/json"},
         method = RequestMethod.GET)
     ResponseEntity<Set<ClinicalVariant>> searchVariantsClinicalGet(@ApiParam(value = "") @RequestParam(value = "hugoSymbol", required = false) String hugoSymbol
-
+        ,@ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     );
 
     @ApiOperation(value = "", notes = "Search to find treatments.", response = Treatment.class, responseContainer = "Set")
@@ -47,6 +49,7 @@ public interface PrivateSearchApi {
     ResponseEntity<Set<Treatment>> searchTreatmentsGet(
         @ApiParam(value = "The search query, it could be hugoSymbol or entrezGeneId.", required = true) @RequestParam(value = "gene", required = false) String queryGene,
         @ApiParam(value = "The level of evidence.", defaultValue = "false") @RequestParam(value = "level", required = false) String queryLevel
+        ,@ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     );
 
     @ApiOperation(value = "", notes = "Find matches based on blur query.", response = TypeaheadSearchResp.class, responseContainer = "List")

@@ -54,6 +54,7 @@ public interface PrivateUtilsApi {
         method = RequestMethod.GET)
     ResponseEntity<GeneNumber> utilsNumbersGeneGet(
         @ApiParam(value = "The gene symbol used in Human Genome Organisation.", required = true) @PathVariable("hugoSymbol") String hugoSymbol
+        ,@ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     );
 
     @ApiOperation(value = "", notes = "Get gene related numbers of all genes. This is for main page word cloud.", response = GeneNumber.class, responseContainer = "Set")
@@ -185,6 +186,7 @@ public interface PrivateUtilsApi {
         , @ApiParam(value = "HGVS genomic format. Example: 7:g.140453136A>T") @RequestParam(value = "hgvsg", required = false) String hgvsg
         , @ApiParam(value = "Genomic change format. Example: 7,140453136,140453136,A,T") @RequestParam(value = "genomicChange", required = false) String genomicChange
         , @ApiParam(value = "OncoTree tumor type name/main type/code") @RequestParam(value = "tumorType", required = false) String tumorType
+        , @ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     ) throws ApiException, org.genome_nexus.ApiException;
 
     @ApiOperation(value = "", notes = "", response = CancerTypeCount.class, responseContainer = "List")

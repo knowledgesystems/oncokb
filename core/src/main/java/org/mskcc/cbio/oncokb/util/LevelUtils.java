@@ -140,7 +140,11 @@ public class LevelUtils {
         return highestLevelIndex > -1 ? levelPool.get(highestLevelIndex) : null;
     }
 
-    public static LevelOfEvidence getHighestLevelFromEvidenceByLevels(Set<Evidence> evidences, Set<LevelOfEvidence> levels) {
+    public static LevelOfEvidence getHighestLevelFromEvidenceByLevels(Set<Evidence> evidences, Set<LevelOfEvidence> levels, Boolean germline) {
+        return getHighestLevelFromEvidenceByLevels(evidences, levels, false, germline);
+    }
+
+    public static LevelOfEvidence getHighestLevelFromEvidenceByLevels(Set<Evidence> evidences, Set<LevelOfEvidence> levels, boolean fdaLevel, Boolean germline) {
         if (levels == null) {
             return getHighestLevelFromEvidence(evidences);
         }
@@ -148,12 +152,14 @@ public class LevelUtils {
             Integer highestLevelIndex = -1;
 
             for (Evidence evidence : evidences) {
+                if(germline != null && !evidence.getForGermline().equals(germline)) continue;
                 LevelOfEvidence level = evidence.getLevelOfEvidence();
-                if (levels.contains(level)) {
-                    if (level != null) {
-                        Integer _index = PUBLIC_LEVELS.indexOf(level);
-                        highestLevelIndex = _index > highestLevelIndex ? _index : highestLevelIndex;
-                    }
+                if(fdaLevel) {
+                    level = evidence.getFdaLevel();
+                }
+                if (level != null && levels.contains(level)) {
+                    Integer _index = PUBLIC_LEVELS.indexOf(level);
+                    highestLevelIndex = _index > highestLevelIndex ? _index : highestLevelIndex;
                 }
             }
 

@@ -509,12 +509,23 @@ public class AnnotationSearchUtils {
                 typeaheadSearchResp.setQueryType(TypeaheadQueryType.GENE);
 
                 if (evidences.containsKey(gene)) {
-                    LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(evidences.get(gene), LevelUtils.getSensitiveLevels());
-                    LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(evidences.get(gene), LevelUtils.getResistanceLevels());
+                    LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(evidences.get(gene), LevelUtils.getSensitiveLevels(), null);
+                    LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(evidences.get(gene), LevelUtils.getResistanceLevels(), null);
                     typeaheadSearchResp.setHighestSensitiveLevel(highestSensitiveLevel == null ? "" : highestSensitiveLevel.getLevel());
                     typeaheadSearchResp.setHighestResistanceLevel(highestResistanceLevel == null ? "" : highestResistanceLevel.getLevel());
                 }
                 result.add(typeaheadSearchResp);
+
+                // include germline/somatic links
+                for (String geneticType : new String[]{"Somatic", "Germline"}) {
+                    typeaheadSearchResp = new TypeaheadSearchResp();
+                    typeaheadSearchResp.setGene(gene);
+                    typeaheadSearchResp.setVariantExist(false);
+                    typeaheadSearchResp.setLink("/gene/" + gene.getHugoSymbol() + "/" + geneticType.toLowerCase());
+                    typeaheadSearchResp.setQueryType(TypeaheadQueryType.GENE);
+                    typeaheadSearchResp.setAnnotation(geneticType);
+                    result.add(typeaheadSearchResp);
+                }
             }
         }
         return result;

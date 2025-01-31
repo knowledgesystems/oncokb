@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.mskcc.cbio.oncokb.model.BiologicalVariant;
 
 import static org.mskcc.cbio.oncokb.util.FusionUtils.FUSION_ALTERNATIVE_SEPARATOR;
 
@@ -54,7 +55,7 @@ public class ValidationUtils {
         final String NO_MUTATION_EFFECT_REFERENCE = "Mutation effect does not have any reference (pmids, abstracts)";
         JSONArray data = new JSONArray();
         for (Gene gene : CacheUtils.getAllGenes()) {
-            Set<BiologicalVariant> variants = MainUtils.getBiologicalVariants(gene);
+            Set<BiologicalVariant> variants = MainUtils.getBiologicalVariants(gene, false);
             for (BiologicalVariant variant : variants) {
                 if (StringUtils.isNullOrEmpty(variant.getOncogenic())) {
                     data.put(getErrorMessage(getTargetByAlteration(variant.getVariant()), NO_ONCOGENECITY));

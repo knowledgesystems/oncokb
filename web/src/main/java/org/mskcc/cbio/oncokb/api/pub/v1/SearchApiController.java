@@ -59,7 +59,7 @@ public class SearchApiController implements SearchApi {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             }
-            Query query = new Query(id,matchedRG, entrezGeneId, hugoSymbol, variant, variantType, svType, tumorType, consequence, proteinStart, proteinEnd, hgvs);
+            Query query = new Query(id,matchedRG, entrezGeneId, hugoSymbol, variant, variantType, svType, tumorType, consequence, proteinStart, proteinEnd, hgvs, false, null, null);
 
             Set<LevelOfEvidence> levelOfEvidences = levels == null ? null : LevelUtils.parseStringLevelOfEvidences(levels);
             indicatorQueryResp = IndicatorUtils.processQuery(query, levelOfEvidences, highestLevelOnly, new HashSet<>(MainUtils.stringToEvidenceTypes(evidenceType, ",")), false);

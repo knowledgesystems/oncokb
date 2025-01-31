@@ -19,6 +19,7 @@ public class IndicatorQueryResp implements java.io.Serializable {
     private Boolean alleleExist;
     private String oncogenic;
     private MutationEffectResp mutationEffect;
+    private GermlineVariant germline = new GermlineVariant();
     private LevelOfEvidence highestSensitiveLevel;
     private LevelOfEvidence highestResistanceLevel;
     private LevelOfEvidence highestDiagnosticImplicationLevel;
@@ -101,6 +102,14 @@ public class IndicatorQueryResp implements java.io.Serializable {
 
     public void setOncogenic(String oncogenic) {
         this.oncogenic = oncogenic;
+    }
+
+    public GermlineVariant getGermline() {
+        return germline;
+    }
+
+    public void setGermline(GermlineVariant germline) {
+        this.germline = germline;
     }
 
     public MutationEffectResp getMutationEffect() {

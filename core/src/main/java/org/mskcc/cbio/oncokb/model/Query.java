@@ -32,6 +32,9 @@ public class Query implements java.io.Serializable {
     private Integer proteinStart;
     private Integer proteinEnd;
     private String hgvs;
+    private boolean isGermline = false;
+    private String alleleState;
+    private Pathogenicity pathogenicity;
 
     public Query() {
     }
@@ -50,6 +53,7 @@ public class Query implements java.io.Serializable {
         newQuery.setProteinStart(this.proteinStart);
         newQuery.setProteinEnd(this.proteinEnd);
         newQuery.setHgvs(this.hgvs);
+        newQuery.setGermline(this.isGermline());
         return newQuery;
     }
 
@@ -67,6 +71,7 @@ public class Query implements java.io.Serializable {
         this.proteinStart = mutationQuery.getProteinStart();
         this.proteinEnd = mutationQuery.getProteinEnd();
         this.referenceGenome = mutationQuery.getReferenceGenome();
+        this.isGermline = mutationQuery.isGermline();
         if (this.referenceGenome == null) {
             this.referenceGenome = DEFAULT_REFERENCE_GENOME;
         }
@@ -98,7 +103,8 @@ public class Query implements java.io.Serializable {
 
     public Query(String id, ReferenceGenome referenceGenome, Integer entrezGeneId, String hugoSymbol,
                  String alteration, String alterationType, StructuralVariantType svType,
-                 String tumorType, String consequence, Integer proteinStart, Integer proteinEnd, String hgvs) {
+                 String tumorType, String consequence, Integer proteinStart, Integer proteinEnd, String hgvs,
+                 Boolean isGermline, String alleleState, Pathogenicity pathogenicity) {
         this.id = id;
         this.referenceGenome = referenceGenome == null ? DEFAULT_REFERENCE_GENOME : referenceGenome;
         if (hugoSymbol != null && !hugoSymbol.isEmpty()) {
@@ -113,6 +119,9 @@ public class Query implements java.io.Serializable {
         this.proteinStart = proteinStart;
         this.proteinEnd = proteinEnd;
         this.setHgvs(hgvs);
+        this.isGermline = isGermline == null ? false : isGermline;
+        this.alleleState = alleleState;
+        this.pathogenicity = pathogenicity;
     }
 
     public String getId() {
@@ -217,9 +226,33 @@ public class Query implements java.io.Serializable {
         this.hgvs = hgvs;
     }
 
+    public boolean isGermline() {
+        return isGermline;
+    }
+
+    public void setGermline(boolean germline) {
+        isGermline = germline;
+    }
+
+    public String getAlleleState() {
+        return alleleState;
+    }
+
+    public void setAlleleState(String alleleState) {
+        this.alleleState = alleleState;
+    }
+
+    public Pathogenicity getPathogenicity() {
+        return this.pathogenicity;
+    }
+
+    public void setPathogenicity(Pathogenicity pathogenicity) {
+        this.pathogenicity = pathogenicity;
+    }
+
     public void enrich() {
         if (this.getEntrezGeneId() == null && this.getHugoSymbol() == null
-            && this.getAlteration() != null && !this.getAlteration().isEmpty()) {
+                && this.getAlteration() != null && !this.getAlteration().isEmpty()) {
             this.setEntrezGeneId(-2);
         }
 
@@ -227,15 +260,15 @@ public class Query implements java.io.Serializable {
         if (this.getAlterationType() != null) {
             AlterationType alterationType = AlterationType.getByName(this.getAlterationType());
             if (alterationType != null && (alterationType.equals(AlterationType.FUSION) ||
-                alterationType.equals(AlterationType.STRUCTURAL_VARIANT)) &&
-                this.getEntrezGeneId() != null) {
+                    alterationType.equals(AlterationType.STRUCTURAL_VARIANT)) &&
+                    this.getEntrezGeneId() != null) {
                 Gene entrezGeneIdGene = GeneUtils.getGeneByEntrezId(this.getEntrezGeneId());
                 this.setHugoSymbol(entrezGeneIdGene.getHugoSymbol());
             }
             if (this.getAlteration() != null &&
-                !this.getAlteration().toLowerCase().contains("fusion") &&
-                (!this.getAlteration().toLowerCase().contains(FUSION_SEPARATOR) && this.getAlteration().toLowerCase().contains(FUSION_ALTERNATIVE_SEPARATOR)) &&
-                (alterationType.equals(AlterationType.FUSION) || (this.consequence != null && this.consequence.toLowerCase().equals("fusion")))
+                    !this.getAlteration().toLowerCase().contains("fusion") &&
+                    (!this.getAlteration().toLowerCase().contains(FUSION_SEPARATOR) && this.getAlteration().toLowerCase().contains(FUSION_ALTERNATIVE_SEPARATOR)) &&
+                    (alterationType.equals(AlterationType.FUSION) || (this.consequence != null && this.consequence.toLowerCase().equals("fusion")))
             ) {
                 this.setAlteration(this.getAlteration() + " Fusion");
             }
@@ -247,6 +280,15 @@ public class Query implements java.io.Serializable {
         }
 
         this.setAlteration(QueryUtils.getAlterationName(this));
+
+        if (StringUtils.isNotEmpty(this.alleleState)) {
+            if (this.alleleState.toLowerCase().equals("heterozygous")) {
+                this.alleleState = "monoallelic";
+            }
+            if (this.alleleState.toLowerCase().equals("homozygous")) {
+                this.alleleState = "biallelic";
+            }
+        }
     }
 
     @JsonIgnore
@@ -301,6 +343,14 @@ public class Query implements java.io.Serializable {
 
         if (this.hgvs != null) {
             content.add(this.hgvs);
+        } else {
+            content.add("");
+        }
+
+        content.add(Boolean.toString(this.isGermline));
+
+        if (this.alleleState != null) {
+            content.add(this.alleleState);
         } else {
             content.add("");
         }

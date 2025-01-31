@@ -38,7 +38,7 @@ public class CacheFetcher {
     OncokbTranscriptService oncokbTranscriptService = new OncokbTranscriptService();
     NotationConverter notationConverter = new NotationConverter();
 
-    @Autowired(required = false) 
+    @Autowired(required = false)
     CacheManager cacheManager;
 
     @Cacheable(cacheResolver = "generalCacheResolver", key = "'all'")
@@ -179,7 +179,7 @@ public class CacheFetcher {
                     gene.getEntrezGeneId(), gene.getHugoSymbol(),
                     gene.getTSG(), gene.getOncogene(),
                     highestSensitiveLevel, highestResistanceLevel,
-                    includeEvidence ? SummaryUtils.geneSummary(gene, gene.getHugoSymbol()) : "",
+                    includeEvidence ? SummaryUtils.geneSummary(gene, gene.getHugoSymbol(), false) : "",
                     includeEvidence ? SummaryUtils.geneBackground(gene, gene.getHugoSymbol()) : ""
                 )
             );
@@ -258,6 +258,9 @@ public class CacheFetcher {
                                            Integer proteinEnd,
                                            StructuralVariantType svType,
                                            String hgvs,
+                                           Boolean isGermline,
+                                           String alleleState,
+                                           Pathogenicity pathogenicity,
                                            Set<LevelOfEvidence> levels,
                                            Boolean highestLevelOnly,
                                            Set<EvidenceType> evidenceTypes,
@@ -265,7 +268,7 @@ public class CacheFetcher {
         if (referenceGenome == null) {
             referenceGenome = DEFAULT_REFERENCE_GENOME;
         }
-        Query query = new Query(null, referenceGenome, entrezGeneId, hugoSymbol, alteration, alterationType, svType, tumorType, consequence, proteinStart, proteinEnd, hgvs);
+        Query query = new Query(null, referenceGenome, entrezGeneId, hugoSymbol, alteration, alterationType, svType, tumorType, consequence, proteinStart, proteinEnd, hgvs, isGermline, alleleState, pathogenicity);
         return IndicatorUtils.processQuery(
             query, levels, highestLevelOnly,
             evidenceTypes, geneQueryOnly

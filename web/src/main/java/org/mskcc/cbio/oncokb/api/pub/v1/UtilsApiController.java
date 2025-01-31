@@ -9,6 +9,7 @@ import org.mskcc.cbio.oncokb.apiModels.download.FileName;
 import org.mskcc.cbio.oncokb.apiModels.download.FileExtension;
 import org.mskcc.cbio.oncokb.cache.CacheFetcher;
 import org.mskcc.cbio.oncokb.model.*;
+import org.mskcc.cbio.oncokb.model.BiologicalVariant;
 import org.mskcc.cbio.oncokb.util.*;
 import org.oncokb.oncokb_transcript.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class UtilsApiController implements UtilsApi {
         if (version != null) {
             return getDataDownloadResponseEntity(version, FileName.ALL_ANNOTATED_VARIANTS, FileExtension.JSON);
         }
-        return new ResponseEntity<>(getAllAnnotatedVariants(), HttpStatus.OK);
+        return new ResponseEntity<>(getAllAnnotatedVariants(false), HttpStatus.OK);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UtilsApiController implements UtilsApi {
         sb.append(MainUtils.listToString(header, separator));
         sb.append(newLine);
 
-        for (AnnotatedVariant annotatedVariant : getAllAnnotatedVariants()) {
+        for (AnnotatedVariant annotatedVariant : getAllAnnotatedVariants(false)) {
             List<String> row = new ArrayList<>();
             row.add(annotatedVariant.getGrch37Isoform());
             row.add(annotatedVariant.getGrch37RefSeq());
@@ -123,13 +124,13 @@ public class UtilsApiController implements UtilsApi {
         return new ResponseEntity<>(sb.toString(), HttpStatus.OK);
     }
 
-    private List<AnnotatedVariant> getAllAnnotatedVariants() {
+    private List<AnnotatedVariant> getAllAnnotatedVariants(boolean germline) {
         List<AnnotatedVariant> annotatedVariantList = new ArrayList<>();
         Set<Gene> genes = CacheUtils.getAllGenes();
         Map<Gene, Set<BiologicalVariant>> map = new HashMap<>();
 
         for (Gene gene : genes) {
-            map.put(gene, MainUtils.getBiologicalVariants(gene));
+            map.put(gene, MainUtils.getBiologicalVariants(gene, germline));
         }
 
         Set<AnnotatedVariant> annotatedVariants = new HashSet<>();
@@ -264,7 +265,7 @@ public class UtilsApiController implements UtilsApi {
         Map<Gene, Set<ClinicalVariant>> map = new HashMap<>();
 
         for (Gene gene : genes) {
-            map.put(gene, MainUtils.getClinicalVariants(gene));
+            map.put(gene, MainUtils.getClinicalVariants(gene, false));
         }
 
         Set<ActionableGene> actionableGenes = new HashSet<>();

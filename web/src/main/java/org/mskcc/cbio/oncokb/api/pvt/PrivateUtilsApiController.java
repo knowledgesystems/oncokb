@@ -73,9 +73,10 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
     @Override
     public ResponseEntity<GeneNumber> utilsNumbersGeneGet(
         @ApiParam(value = "The gene symbol used in Human Genome Organisation.", required = true) @PathVariable("hugoSymbol") String hugoSymbol
+        ,@ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline
     ) {
         HttpStatus status = HttpStatus.OK;
-        Set<GeneNumber> geneNumbers = NumberUtils.getGeneNumberListWithLevels(Collections.singleton(GeneUtils.getGeneByHugoSymbol(hugoSymbol)), LevelUtils.getPublicLevels());
+        Set<GeneNumber> geneNumbers = NumberUtils.getGeneNumberListWithLevels(Collections.singleton(GeneUtils.getGeneByHugoSymbol(hugoSymbol)), LevelUtils.getPublicLevels(), germline != null && germline);
         GeneNumber geneNumber = null;
 
         if (geneNumbers.size() == 1) {
@@ -93,7 +94,7 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
         Set<GeneNumber> genes = new HashSet<>();
 
         if (CacheUtils.getNumbers("genes") == null) {
-            genes = NumberUtils.getAllGeneNumberListByLevels(LevelUtils.getPublicLevels());
+            genes = NumberUtils.getAllGeneNumberListByLevels(LevelUtils.getPublicLevels(), false);
             CacheUtils.setNumbers("genes", genes);
         } else {
             genes = (Set<GeneNumber>) CacheUtils.getNumbers("genes");
@@ -123,7 +124,8 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
             Set<Evidence> evidences = CacheUtils.getAllEvidences();
             Set<TumorType> treatmentTumorTypes = new HashSet<>();
             for (Evidence evidence : evidences) {
-                if (evidence.getLevelOfEvidence() != null && !evidence.getCancerTypes().isEmpty()) {
+                if (evidence.getLevelOfEvidence() != null && !evidence.getCancerTypes().isEmpty()
+                    && !evidence.getForGermline()) {
                     treatmentTumorTypes.addAll(evidence.getCancerTypes());
                 }
             }
@@ -365,7 +367,8 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
         , @ApiParam(value = "Alteration") @RequestParam(value = "alteration", required = false) String alteration
         , @ApiParam(value = "HGVS genomic format. Example: 7:g.140453136A>T") @RequestParam(value = "hgvsg", required = false) String hgvsg
         , @ApiParam(value = "Genomic change format. Example: 7,140453136,140453136,A,T") @RequestParam(value = "genomicChange", required = false) String genomicChange
-        , @ApiParam(value = "OncoTree tumor type name/main type/code") @RequestParam(value = "tumorType", required = false) String tumorType) throws ApiException, org.genome_nexus.ApiException {
+        , @ApiParam(value = "OncoTree tumor type name/main type/code") @RequestParam(value = "tumorType", required = false) String tumorType
+        , @ApiParam(value = "false") @RequestParam(value = "germline", required = false) Boolean germline) throws ApiException, org.genome_nexus.ApiException {
 
 
         List<TumorType> relevantTumorTypes = TumorTypeUtils.findRelevantTumorTypes(tumorType);
@@ -379,6 +382,7 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }
+        if(germline == null) germline = false;
         if (!StringUtils.isNullOrEmpty(hgvsg) || !StringUtils.isNullOrEmpty(genomicChange)) {
             String genomicQuery = StringUtils.isNullOrEmpty(hgvsg) ? genomicChange : hgvsg;
             GNVariantAnnotationType type = StringUtils.isNullOrEmpty(hgvsg) ? GNVariantAnnotationType.GENOMIC_LOCATION : GNVariantAnnotationType.HGVS_G;
@@ -408,7 +412,8 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
             query = new Query(alterationModel, matchedRG);
         }
         query.setTumorType(tumorType);
-        List<EvidenceQueryRes> responses = EvidenceUtils.processRequest(Collections.singletonList(query), new HashSet<>(EvidenceTypeUtils.getAllEvidenceTypes()), LevelUtils.getPublicLevels(), false, false);
+        query.setGermline(germline);
+        List<EvidenceQueryRes> responses = EvidenceUtils.processRequest(Collections.singletonList(query), new HashSet<>(EvidenceTypeUtils.getAllEvidenceTypes(query.isGermline())), LevelUtils.getPublicLevels(), false, false);
         IndicatorQueryResp indicatorQueryResp = IndicatorUtils.processQuery(query, null, false, null, false);
 
         EvidenceQueryRes response = responses.iterator().next();

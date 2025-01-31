@@ -21,8 +21,8 @@ public class NumberUtils {
 
             geneNumber.setGene(pair.getKey());
 
-            LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), LevelUtils.getSensitiveLevels());
-            LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), LevelUtils.getResistanceLevels());
+            LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), LevelUtils.getSensitiveLevels(), false);
+            LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), LevelUtils.getResistanceLevels(), false);
             geneNumber.setHighestSensitiveLevel(highestSensitiveLevel != null ? highestSensitiveLevel.name() : null);
             geneNumber.setHighestResistanceLevel(highestResistanceLevel != null ? highestResistanceLevel.name() : null);
 
@@ -34,7 +34,7 @@ public class NumberUtils {
         return geneNumbers;
     }
 
-    public static Set<GeneNumber> getGeneNumberListWithLevels(Set<Gene> genes, Set<LevelOfEvidence> levels) {
+    public static Set<GeneNumber> getGeneNumberListWithLevels(Set<Gene> genes, Set<LevelOfEvidence> levels, boolean germline) {
         if (levels == null) {
             return getGeneNumberList(genes);
         }
@@ -49,16 +49,24 @@ public class NumberUtils {
 
             geneNumber.setGene(pair.getKey());
 
-            LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getSensitiveLevels())));
-            LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getResistanceLevels())));
-            LevelOfEvidence highestDiagnosticLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getDiagnosticLevels())));
-            LevelOfEvidence highestPrognosticLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getPrognosticLevels())));
-            LevelOfEvidence highestFdaLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.geFdaLevels())));
+            LevelOfEvidence highestSensitiveLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getSensitiveLevels())), germline);
+            LevelOfEvidence highestResistanceLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getResistanceLevels())), germline);
+            LevelOfEvidence highestDiagnosticLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getDiagnosticLevels())), germline);
+            LevelOfEvidence highestPrognosticLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.getPrognosticLevels())), germline);
+            LevelOfEvidence highestFdaLevel = LevelUtils.getHighestLevelFromEvidenceByLevels(pair.getValue(), new HashSet<LevelOfEvidence>(CollectionUtils.intersection(levels, LevelUtils.geFdaLevels())), true, germline);
             geneNumber.setHighestSensitiveLevel(highestSensitiveLevel != null ? highestSensitiveLevel.name() : null);
             geneNumber.setHighestResistanceLevel(highestResistanceLevel != null ? highestResistanceLevel.name() : null);
             geneNumber.setHighestDiagnosticImplicationLevel(highestDiagnosticLevel != null ? highestDiagnosticLevel.name() : null);
             geneNumber.setHighestPrognosticImplicationLevel(highestPrognosticLevel != null ? highestPrognosticLevel.name() : null);
             geneNumber.setHighestFdaLevel(highestFdaLevel != null ? highestFdaLevel.name() : null);
+
+            if (germline) {
+                Optional<Evidence> optionalPenetrance = pair.getValue().stream().filter(evidence -> EvidenceType.GENE_PENETRANCE.equals(evidence.getEvidenceType())).findFirst();
+                optionalPenetrance.ifPresent(evidence -> geneNumber.setPenetrance(evidence.getKnownEffect()));
+
+                Optional<Evidence> optionalInheritanceMechanism = pair.getValue().stream().filter(evidence -> EvidenceType.GENE_INHERITANCE_MECHANISM.equals(evidence.getEvidenceType())).findFirst();
+                optionalInheritanceMechanism.ifPresent(evidence -> geneNumber.setInheritanceMechanism(evidence.getKnownEffect()));
+            }
 
             List<Alteration> alterations = AlterationUtils.getAllAlterations(null, pair.getKey());
             List<Alteration> excludeVUS = AlterationUtils.excludeVUS(pair.getKey(), new ArrayList<>(alterations));
@@ -134,11 +142,11 @@ public class NumberUtils {
         return getGeneNumberList(CacheUtils.getAllGenes());
     }
 
-    public static Set<GeneNumber> getAllGeneNumberListByLevels(Set<LevelOfEvidence> levels) {
+    public static Set<GeneNumber> getAllGeneNumberListByLevels(Set<LevelOfEvidence> levels, boolean germline) {
         if (levels == null) {
             return getAllGeneNumberList();
         }
-        return getGeneNumberListWithLevels(CacheUtils.getAllGenes(), levels);
+        return getGeneNumberListWithLevels(CacheUtils.getAllGenes(), levels, germline);
     }
 
     public static Integer getDrugsCount() {

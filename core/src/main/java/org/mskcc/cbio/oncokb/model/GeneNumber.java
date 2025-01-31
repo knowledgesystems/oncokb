@@ -18,6 +18,8 @@ public class GeneNumber {
     private String highestDiagnosticImplicationLevel = null;
     private String highestPrognosticImplicationLevel = null;
     private String highestFdaLevel = null;
+    private String penetrance = null;
+    private String inheritanceMechanism = null;
 
     /**
      **/
@@ -97,6 +99,22 @@ public class GeneNumber {
         this.highestFdaLevel = highestFdaLevel;
     }
 
+    public String getPenetrance() {
+        return penetrance;
+    }
+
+    public void setPenetrance(String penetrance) {
+        this.penetrance = penetrance;
+    }
+
+    public String getInheritanceMechanism() {
+        return inheritanceMechanism;
+    }
+
+    public void setInheritanceMechanism(String inheritanceMechanism) {
+        this.inheritanceMechanism = inheritanceMechanism;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,12 +127,14 @@ public class GeneNumber {
             Objects.equals(getHighestResistanceLevel(), that.getHighestResistanceLevel()) &&
             Objects.equals(getHighestDiagnosticImplicationLevel(), that.getHighestDiagnosticImplicationLevel()) &&
             Objects.equals(getHighestPrognosticImplicationLevel(), that.getHighestPrognosticImplicationLevel()) &&
-            Objects.equals(getHighestFdaLevel(), that.getHighestFdaLevel());
+            Objects.equals(getHighestFdaLevel(), that.getHighestFdaLevel()) &&
+            Objects.equals(getPenetrance(), that.getPenetrance()) &&
+            Objects.equals(getInheritanceMechanism(), that.getInheritanceMechanism());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getGene(), getAlteration(), getTumorType(), getHighestSensitiveLevel(), getHighestResistanceLevel(), getHighestDiagnosticImplicationLevel(), getHighestPrognosticImplicationLevel(), getHighestFdaLevel());
+        return Objects.hash(getGene(), getAlteration(), getTumorType(), getHighestSensitiveLevel(), getHighestResistanceLevel(), getHighestDiagnosticImplicationLevel(), getHighestPrognosticImplicationLevel(), getHighestFdaLevel(), getPenetrance(), getInheritanceMechanism());
     }
 
     @Override
@@ -128,6 +148,8 @@ public class GeneNumber {
             ", highestDiagnosticImplicationLevel='" + highestDiagnosticImplicationLevel + '\'' +
             ", highestPrognosticImplicationLevel='" + highestPrognosticImplicationLevel + '\'' +
             ", highestFdaLevel='" + highestFdaLevel + '\'' +
+            ", penetrance='" + penetrance + '\'' +
+            ", inheritanceMechanism='" + inheritanceMechanism + '\'' +
             '}';
     }
 }
