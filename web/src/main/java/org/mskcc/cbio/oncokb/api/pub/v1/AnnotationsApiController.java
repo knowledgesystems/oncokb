@@ -599,7 +599,7 @@ public class AnnotationsApiController {
         String tumorType,
         Set<EvidenceType> evidenceTypes
     ) {
-        Query query = QueryUtils.getQueryFromAlteration(referenceGenome, tumorType, transcriptSummaryAlterationResult, null);
+        Query query = QueryUtils.getQueryFromAlteration(referenceGenome, tumorType, transcriptSummaryAlterationResult, hgvs);
 
         IndicatorQueryResp indicatorQueryResp = this.cacheFetcher.processQuery(
             referenceGenome,
@@ -612,7 +612,7 @@ public class AnnotationsApiController {
             query.getProteinStart(),
             query.getProteinEnd(),
             null,
-            null,
+            query.getHgvs(),
             null,
             false,
             evidenceTypes,
