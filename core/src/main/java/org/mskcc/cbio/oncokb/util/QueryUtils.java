@@ -2,6 +2,7 @@ package org.mskcc.cbio.oncokb.util;
 
 import com.mysql.jdbc.StringUtils;
 import org.mskcc.cbio.oncokb.model.*;
+import org.mskcc.cbio.oncokb.model.genomeNexus.TranscriptSummaryAlterationResult;
 
 import java.util.LinkedHashSet;
 
@@ -44,12 +45,14 @@ public class QueryUtils {
         return name;
     }
 
-    public static Query getQueryFromAlteration(ReferenceGenome referenceGenome, String tumorType, Alteration alteration, String hgvsg) {
+    public static Query getQueryFromAlteration(ReferenceGenome referenceGenome, String tumorType, TranscriptSummaryAlterationResult transcriptSummaryAlterationResult, String hgvsg) {
         Query query = new Query();
         query.setReferenceGenome(referenceGenome);
         query.setHgvs(hgvsg);
         query.setTumorType(tumorType);
-        if (alteration != null) {
+
+        if (transcriptSummaryAlterationResult != null) {
+            Alteration alteration = transcriptSummaryAlterationResult.getAlteration();
             if (alteration.getGene() != null) {
                 query.setHugoSymbol(alteration.getGene().getHugoSymbol());
                 query.setEntrezGeneId(alteration.getGene().getEntrezGeneId());

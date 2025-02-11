@@ -7,6 +7,7 @@ import org.genome_nexus.ApiException;
 import org.mskcc.cbio.oncokb.bo.AlterationBo;
 import org.mskcc.cbio.oncokb.genomenexus.GNVariantAnnotationType;
 import org.mskcc.cbio.oncokb.model.*;
+import org.mskcc.cbio.oncokb.model.genomeNexus.TranscriptSummaryAlterationResult;
 import org.mskcc.cbio.oncokb.service.JsonResultFactory;
 import org.mskcc.cbio.oncokb.util.*;
 import org.springframework.http.HttpStatus;
@@ -84,8 +85,9 @@ public class VariantsApiController implements VariantsApi {
         List<Alteration> alterationList = new ArrayList<>();
         if (query != null) {
             if (query.getHgvs() != null && !query.getHgvs().isEmpty()) {
-                Alteration alteration = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.HGVS_G, query.getReferenceGenome(), query.getHgvs());
-                if (alteration != null && alteration.getGene() != null) {
+                TranscriptSummaryAlterationResult transcriptSummaryAlterationResult = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.HGVS_G, query.getReferenceGenome(), query.getHgvs());
+                Alteration alteration = transcriptSummaryAlterationResult.getAlteration()
+;                if (alteration != null && alteration.getGene() != null) {
                     List<Alteration> allAlterations = AlterationUtils.getAllAlterations(query.getReferenceGenome(), alteration.getGene());
                     alterationList.addAll(ApplicationContextSingleton.getAlterationBo().findRelevantAlterations(query.getReferenceGenome(), alteration, allAlterations, true));
                 }

@@ -18,6 +18,7 @@ import org.mskcc.cbio.oncokb.controller.advice.ApiHttpErrorException;
 import org.mskcc.cbio.oncokb.genomenexus.GNVariantAnnotationType;
 import org.mskcc.cbio.oncokb.model.*;
 import org.mskcc.cbio.oncokb.model.TumorType;
+import org.mskcc.cbio.oncokb.model.genomeNexus.TranscriptSummaryAlterationResult;
 import org.mskcc.cbio.oncokb.bo.OncokbTranscriptService;
 import org.mskcc.cbio.oncokb.util.*;
 import org.oncokb.oncokb_transcript.ApiException;
@@ -382,19 +383,17 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
             }
         }
         if (!StringUtils.isNullOrEmpty(hgvsg) || !StringUtils.isNullOrEmpty(genomicChange)) {
-            Alteration alterationModel = null;
+            TranscriptSummaryAlterationResult transcriptSummaryAlterationResult = null;
             if (!StringUtils.isNullOrEmpty(hgvsg)) {
                 if (this.cacheFetcher.hgvsgShouldBeAnnotated(hgvsg, matchedRG)) {
-                    alterationModel = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.HGVS_G, matchedRG, hgvsg);
+                    transcriptSummaryAlterationResult = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.HGVS_G, matchedRG, hgvsg);
                 }
-                if (alterationModel == null) alterationModel = new Alteration();
             } else {
                 if (this.cacheFetcher.genomicLocationShouldBeAnnotated(GenomeNexusUtils.convertGenomicLocation(genomicChange), matchedRG)) {
-                    alterationModel = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.GENOMIC_LOCATION, matchedRG, genomicChange);
+                    transcriptSummaryAlterationResult = AlterationUtils.getAlterationFromGenomeNexus(GNVariantAnnotationType.GENOMIC_LOCATION, matchedRG, genomicChange);
                 }
-                if (alterationModel == null) alterationModel = new Alteration();
             }
-            query = QueryUtils.getQueryFromAlteration(matchedRG, tumorType, alterationModel, hgvsg);
+            query = QueryUtils.getQueryFromAlteration(matchedRG, tumorType, transcriptSummaryAlterationResult, hgvsg);
             gene = GeneUtils.getGeneByEntrezId(query.getEntrezGeneId());
         } else {
             gene = GeneUtils.getGene(entrezGeneId, hugoSymbol);
@@ -423,7 +422,8 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
 
         // for any hgvsg variant, we need to check whether it is VUE
         if(!StringUtils.isNullOrEmpty(hgvsg)) {
-            TranscriptConsequenceSummary transcriptConsequenceSummary = GenomeNexusUtils.getTranscriptConsequence(GNVariantAnnotationType.HGVS_G, hgvsg, matchedRG);
+            TranscriptSummaryAlterationResult annotationResult = GenomeNexusUtils.getTranscriptConsequence(GNVariantAnnotationType.HGVS_G, hgvsg, matchedRG);
+            TranscriptConsequenceSummary transcriptConsequenceSummary = annotationResult.getTranscriptConsequenceSummary();
             if (transcriptConsequenceSummary != null && transcriptConsequenceSummary.isIsVue() != null && transcriptConsequenceSummary.isIsVue()) {
                 annotation.setVUE(true);
             }

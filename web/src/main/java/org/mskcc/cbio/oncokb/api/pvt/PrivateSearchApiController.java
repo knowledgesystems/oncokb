@@ -11,6 +11,7 @@ import org.mskcc.cbio.oncokb.bo.OncokbTranscriptService;
 import org.mskcc.cbio.oncokb.cache.CacheFetcher;
 import org.mskcc.cbio.oncokb.genomenexus.GNVariantAnnotationType;
 import org.mskcc.cbio.oncokb.model.*;
+import org.mskcc.cbio.oncokb.model.genomeNexus.TranscriptSummaryAlterationResult;
 import org.mskcc.cbio.oncokb.util.*;
 import org.oncokb.oncokb_transcript.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +120,7 @@ public class PrivateSearchApiController implements PrivateSearchApi {
                     type = GNVariantAnnotationType.GENOMIC_LOCATION;
                 }
                 if (type != null) {
-                    Alteration alterationModel;
+                    TranscriptSummaryAlterationResult transcriptSummaryAlterationResult;
                     String refGenomeStr = "";
                     ReferenceGenome referenceGenome = ReferenceGenome.GRCh37;
                     Matcher rgm = (GNVariantAnnotationType.HGVS_G.equals(type) ? HGVSG_FORMAT : GENOMIC_CHANGE_FORMAT).matcher(trimmedQuery);
@@ -134,14 +135,11 @@ public class PrivateSearchApiController implements PrivateSearchApi {
                         }
                     }
                     try {
-                        alterationModel = AlterationUtils.getAlterationFromGenomeNexus(type, referenceGenome, trimmedQuery);
-                        if (alterationModel == null) {
-                            alterationModel = new Alteration();
-                        }
-                        if (alterationModel.getGene() != null) {
-                            Query annotationQuery = QueryUtils.getQueryFromAlteration(referenceGenome, "", alterationModel, HGVSG_FORMAT.equals(type) ? trimmedQuery : "");
+                        transcriptSummaryAlterationResult = AlterationUtils.getAlterationFromGenomeNexus(type, referenceGenome, trimmedQuery);
+                        if (transcriptSummaryAlterationResult.getAlteration().getGene() != null) {
+                            Query annotationQuery = QueryUtils.getQueryFromAlteration(referenceGenome, "", transcriptSummaryAlterationResult, HGVSG_FORMAT.equals(type) ? trimmedQuery : "");
                             IndicatorQueryResp indicatorQueryResp = IndicatorUtils.processQuery(annotationQuery, null, false, null, true);
-                            result.add(newTypeaheadAnnotation(trimmedQuery, type, referenceGenome, alterationModel, indicatorQueryResp));
+                            result.add(newTypeaheadAnnotation(trimmedQuery, type, referenceGenome, transcriptSummaryAlterationResult.getAlteration(), indicatorQueryResp));
                         }
                     } catch (org.genome_nexus.ApiException e) {
                         throw new RuntimeException(e);
