@@ -357,7 +357,7 @@ public class GenomeNexusUtils {
         else {
             // If there are no matching summaries, we cannot annotate this variant.
             selectedAnnotationResult = new TranscriptSummaryAlterationResult();
-            selectedAnnotationResult.setMessage("This variant does not occur within a canonical transcript range of an OncoKB cancer gene.");
+            selectedAnnotationResult.setMessage("This variant does not occur within a gene or transcript annotated in OncoKB.");
         }
 
         // Only return one consequence term
