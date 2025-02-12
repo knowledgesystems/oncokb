@@ -6,7 +6,7 @@ import org.genome_nexus.ApiException;
 import org.genome_nexus.client.TranscriptConsequenceSummary;
 import org.genome_nexus.client.VariantAnnotation;
 import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByGenomicChangeQuery;
-import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSgQuery;
+import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSQuery;
 import org.mskcc.cbio.oncokb.bo.AlterationBo;
 import org.mskcc.cbio.oncokb.bo.EvidenceBo;
 import org.mskcc.cbio.oncokb.genomenexus.GNVariantAnnotationType;
@@ -37,6 +37,7 @@ public final class AlterationUtils {
     // We do not intend to do comprehensive checking, but only eliminate some basic errors.
     // GenomeNexus will evaluate it further
     public static Pattern HGVSG_FORMAT = Pattern.compile("((grch37|grch38):)?((chr)?[\\dxy]+:g\\.\\d+.*)", Pattern.CASE_INSENSITIVE);
+    public static Pattern HGVSC_FORMAT = Pattern.compile("((grch37|grch38):)?(ENST\\d+(\\.\\d+)?:c\\.\\d+.*)", Pattern.CASE_INSENSITIVE);
     public static Pattern GENOMIC_CHANGE_FORMAT = Pattern.compile("((grch37|grch38):)?([\\dxy]+,\\d+,\\d+,.*)", Pattern.CASE_INSENSITIVE);
 
     private static String EXCLUSION_SEPERATOR_REGEX = "\\s*;\\s*";
@@ -63,6 +64,18 @@ public final class AlterationUtils {
             return false;
         }
         return HGVSG_FORMAT.matcher(hgvsg).matches();
+    }
+
+    public static boolean isValidHgvsc(String hgvsc) {
+        hgvsc = hgvsc == null ? null : hgvsc.trim();
+        if (StringUtils.isEmpty(hgvsc)) {
+            return false;
+        }
+        return HGVSC_FORMAT.matcher(hgvsc).matches();
+    }
+
+    public static boolean isValidHgvs(String hgvs) {
+        return isValidHgvsg(hgvs) || isValidHgvsc(hgvs);
     }
 
     public static boolean isValidGenomicChange(String query) {
@@ -714,8 +727,8 @@ public final class AlterationUtils {
         }
     }
 
-    public static List<VariantAnnotation> getHgvsgVariantsAnnotationWithQueries(List<AnnotateMutationByHGVSgQuery> queries, ReferenceGenome referenceGenome) throws ApiException {
-        return GenomeNexusUtils.getHgvsgVariantsAnnotation(queries.stream().map(AnnotateMutationByHGVSgQuery::getHgvsg).collect(Collectors.toList()), referenceGenome);
+    public static List<VariantAnnotation> getHgvsgVariantsAnnotationWithQueries(List<AnnotateMutationByHGVSQuery> queries, ReferenceGenome referenceGenome) throws ApiException {
+        return GenomeNexusUtils.getHgvsVariantsAnnotation(queries.stream().map(AnnotateMutationByHGVSQuery::getHgvs).collect(Collectors.toList()), referenceGenome);
     }
 
     public static List<VariantAnnotation> getGenomicLocationVariantsAnnotationWithQueries(List<AnnotateMutationByGenomicChangeQuery> queries, ReferenceGenome referenceGenome) throws ApiException {
@@ -725,7 +738,7 @@ public final class AlterationUtils {
     public static Alteration getAlterationFromGenomeNexus(GNVariantAnnotationType type, ReferenceGenome referenceGenome, String query) throws ApiException {
         List<VariantAnnotation> variantAnnotations = new ArrayList<>();
         if (GNVariantAnnotationType.HGVS_G == type) {
-            variantAnnotations = GenomeNexusUtils.getHgvsgVariantsAnnotation(Collections.singletonList(query), referenceGenome);
+            variantAnnotations = GenomeNexusUtils.getHgvsVariantsAnnotation(Collections.singletonList(query), referenceGenome);
         } else if (GNVariantAnnotationType.GENOMIC_LOCATION == type) {
             variantAnnotations = GenomeNexusUtils.getGenomicLocationVariantsAnnotation(Collections.singletonList(GenomeNexusUtils.convertGenomicLocation(query)), referenceGenome);
         }

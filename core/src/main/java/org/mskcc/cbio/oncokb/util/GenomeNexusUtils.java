@@ -140,7 +140,7 @@ public class GenomeNexusUtils {
         if (type == GNVariantAnnotationType.GENOMIC_LOCATION) {
             annotations.addAll(getGenomicLocationVariantsAnnotation(Collections.singletonList(GenomeNexusUtils.convertGenomicLocation(query)), referenceGenome));
         } else if (type == GNVariantAnnotationType.HGVS_G) {
-            annotations.addAll(getHgvsgVariantsAnnotation(Collections.singletonList(query), referenceGenome));
+            annotations.addAll(getHgvsVariantsAnnotation(Collections.singletonList(query), referenceGenome));
         }
         List<TranscriptConsequenceSummary> map = getTranscriptsConsequence(annotations, referenceGenome);
         if (map.isEmpty()) {
@@ -283,7 +283,7 @@ public class GenomeNexusUtils {
         return String.join(",", parts);
     }
 
-    public static List<VariantAnnotation> getHgvsgVariantsAnnotation(List<String> queries, ReferenceGenome referenceGenome) throws ApiException {
+    public static List<VariantAnnotation> getHgvsVariantsAnnotation(List<String> queries, ReferenceGenome referenceGenome) throws ApiException {
         List<VariantAnnotation> variantsAnnotation = new ArrayList<>();
         if (queries != null) {
             List<String> gnFields = new ArrayList<>();

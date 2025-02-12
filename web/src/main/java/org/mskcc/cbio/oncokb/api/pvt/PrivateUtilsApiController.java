@@ -6,7 +6,7 @@ import org.genome_nexus.client.GenomicLocation;
 import org.genome_nexus.client.TranscriptConsequenceSummary;
 import org.mskcc.cbio.oncokb.apiModels.*;
 import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByGenomicChangeQuery;
-import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSgQuery;
+import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSQuery;
 import org.mskcc.cbio.oncokb.apiModels.download.DownloadAvailability;
 import org.mskcc.cbio.oncokb.apiModels.download.FileExtension;
 import org.mskcc.cbio.oncokb.apiModels.download.FileName;
@@ -598,16 +598,16 @@ public class PrivateUtilsApiController implements PrivateUtilsApi {
 
     @Override
     public ResponseEntity<List<TranscriptCoverageFilterResult>> utilFilterHgvsgBasedOnCoveragePost(
-        @ApiParam(value = "List of queries.", required = true) @RequestBody List<AnnotateMutationByHGVSgQuery> body
+        @ApiParam(value = "List of queries.", required = true) @RequestBody List<AnnotateMutationByHGVSQuery> body
     ) throws ApiException, ApiHttpErrorException {
         List<TranscriptCoverageFilterResult> result = new ArrayList<>();
 
         if (body == null) {
             throw new ApiHttpErrorException("The request body is missing.", HttpStatus.BAD_REQUEST);
         } else {
-            for (AnnotateMutationByHGVSgQuery query : body) {
-                boolean shouldAnnotate = this.cacheFetcher.hgvsgShouldBeAnnotated(query.getHgvsg(), query.getReferenceGenome());
-                result.add(new TranscriptCoverageFilterResult(query.getHgvsg(), shouldAnnotate));
+            for (AnnotateMutationByHGVSQuery query : body) {
+                boolean shouldAnnotate = this.cacheFetcher.hgvsgShouldBeAnnotated(query.getHgvs(), query.getReferenceGenome());
+                result.add(new TranscriptCoverageFilterResult(query.getHgvs(), shouldAnnotate));
             }
         }
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -16,7 +16,7 @@ import org.mskcc.cbio.oncokb.apiModels.TranscriptPair;
 import org.mskcc.cbio.oncokb.apiModels.TranscriptResult;
 import org.mskcc.cbio.oncokb.apiModels.VariantAnnotation;
 import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByGenomicChangeQuery;
-import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSgQuery;
+import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSQuery;
 import org.mskcc.cbio.oncokb.cache.CacheFetcher;
 import org.mskcc.cbio.oncokb.controller.advice.ApiHttpError;
 import org.mskcc.cbio.oncokb.controller.advice.ApiHttpErrorException;
@@ -76,16 +76,16 @@ public class PrivateGenomeNexusController {
         produces = {"application/json"},
         method = RequestMethod.POST)
     public ResponseEntity<List<GenomeNexusAnnotatedVariantInfo>> fetchGenomeNexusVariantInfoByHGVSgPost(
-        @ApiParam(value = "List of queries. Please see swagger.json for request body format.", required = true) @RequestBody() List<AnnotateMutationByHGVSgQuery> body
+        @ApiParam(value = "List of queries. Please see swagger.json for request body format.", required = true) @RequestBody() List<AnnotateMutationByHGVSQuery> body
     ) throws org.genome_nexus.ApiException, ApiHttpErrorException {
         List<GenomeNexusAnnotatedVariantInfo> result = new ArrayList<>();
 
         if (body == null) {
             throw new ApiHttpErrorException("The request body is missing.", HttpStatus.BAD_REQUEST);
         } else {
-            List<AnnotateMutationByHGVSgQuery> grch37Queries = new ArrayList<>();
-            List<AnnotateMutationByHGVSgQuery> grch38Queries = new ArrayList<>();
-            for (AnnotateMutationByHGVSgQuery query : body) {
+            List<AnnotateMutationByHGVSQuery> grch37Queries = new ArrayList<>();
+            List<AnnotateMutationByHGVSQuery> grch38Queries = new ArrayList<>();
+            for (AnnotateMutationByHGVSQuery query : body) {
                 ReferenceGenome referenceGenome = ReferenceGenome.GRCh37;
                 if (query.getReferenceGenome() != null) {
                     referenceGenome = query.getReferenceGenome();

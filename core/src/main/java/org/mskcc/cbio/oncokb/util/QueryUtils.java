@@ -44,10 +44,10 @@ public class QueryUtils {
         return name;
     }
 
-    public static Query getQueryFromAlteration(ReferenceGenome referenceGenome, String tumorType, Alteration alteration, String hgvsg) {
+    public static Query getQueryFromAlteration(ReferenceGenome referenceGenome, String tumorType, Alteration alteration, String hgvs) {
         Query query = new Query();
         query.setReferenceGenome(referenceGenome);
-        query.setHgvs(hgvsg);
+        query.setHgvs(hgvs);
         query.setTumorType(tumorType);
         if (alteration != null) {
             if (alteration.getGene() != null) {

@@ -3,7 +3,7 @@ package org.mskcc.cbio.oncokb.api.pvt;
 import io.swagger.annotations.*;
 import org.mskcc.cbio.oncokb.apiModels.*;
 import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByGenomicChangeQuery;
-import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSgQuery;
+import org.mskcc.cbio.oncokb.apiModels.annotation.AnnotateMutationByHGVSQuery;
 import org.mskcc.cbio.oncokb.apiModels.download.DownloadAvailability;
 import org.mskcc.cbio.oncokb.apiModels.ensembl.EnsemblGene;
 import org.mskcc.cbio.oncokb.controller.advice.ApiHttpError;
@@ -279,7 +279,7 @@ public interface PrivateUtilsApi {
         produces = {"application/json"},
         method = RequestMethod.POST)
     ResponseEntity<List<TranscriptCoverageFilterResult>> utilFilterHgvsgBasedOnCoveragePost(
-        @ApiParam(value = "List of queries.", required = true) @RequestBody List<AnnotateMutationByHGVSgQuery> body
+        @ApiParam(value = "List of queries.", required = true) @RequestBody List<AnnotateMutationByHGVSQuery> body
     ) throws ApiException, org.genome_nexus.ApiException, ApiHttpErrorException;
 
     @ApiOperation(value = "", notes = "Filter genomic change based on oncokb coverage", response = String.class, responseContainer = "List")
